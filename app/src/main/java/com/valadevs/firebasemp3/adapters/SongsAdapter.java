@@ -1,50 +1,33 @@
 package com.valadevs.firebasemp3.adapters;
 
-
-import android.content.Context;
-import android.media.AudioManager;
-import android.media.MediaPlayer;
-import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.MediaController;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
+import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.valadevs.firebasemp3.R;
 import com.valadevs.firebasemp3.models.Song;
-
-import java.io.IOException;
 import java.util.ArrayList;
 
-public class SongsAdapter extends RecyclerView.Adapter<SongsAdapter.SongsViewHolder> implements MediaController.MediaPlayerControl {
+import pl.droidsonroids.gif.GifImageView;
+
+public class SongsAdapter extends RecyclerView.Adapter<SongsAdapter.SongsViewHolder> {
+
     private ArrayList<Song> songs;
-    private Context context;
-    private MediaPlayer mediaPlayer;
-    private MediaController controller;
+    private SimpleExoPlayer exoPlayer;
+    private SongsViewHolder currentViewPlaying = null;
 
-    public SongsAdapter(ArrayList<Song> songs, View v) {
+    public SongsAdapter(ArrayList<Song> songs,SimpleExoPlayer exoPlayer) {
         this.songs = songs;
-        context = v.getContext();
-        controller = new MediaController(context);
-
-
-
-        controller.setMediaPlayer(this);
-        controller.setEnabled(true);
-        controller.setAnchorView(v);
-
-
-
+        this.exoPlayer = exoPlayer;
     }
 
     @NonNull
     @Override
     public SongsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_song_rv,parent,false);
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_song_rv, parent, false);
         return new SongsViewHolder(v);
     }
 
@@ -53,101 +36,36 @@ public class SongsAdapter extends RecyclerView.Adapter<SongsAdapter.SongsViewHol
         holder.title.setText(songs.get(position).getTitle());
         holder.artist.setText(songs.get(position).getArtist());
         holder.album.setText(songs.get(position).getAlbum());
+
+        holder.itemView.setOnClickListener(v -> {
+            exoPlayer.prepare();
+            exoPlayer.seekToDefaultPosition(position);
+            exoPlayer.setPlayWhenReady(true);
+            holder.isPlayingGif.setVisibility(View.VISIBLE);
+            if(currentViewPlaying!=null){
+                currentViewPlaying.isPlayingGif.setVisibility(View.GONE);
+            }
+            currentViewPlaying = holder;
+
+        });
+    }
+
+    @Override
+    public int getItemCount() {
+        return songs.size();
     }
 
 
-
     public class SongsViewHolder extends RecyclerView.ViewHolder {
-        private TextView title,artist,album;
+        private TextView title, artist, album;
+        private GifImageView isPlayingGif;
 
         public SongsViewHolder(View itemView) {
             super(itemView);
             title = itemView.findViewById(R.id.titulo);
             artist = itemView.findViewById(R.id.artista);
             album = itemView.findViewById(R.id.album);
-
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    if(mediaPlayer!=null) {
-                        if(mediaPlayer.isPlaying())
-                        mediaPlayer.stop();
-                        mediaPlayer.reset();
-                    }
-
-                    mediaPlayer = new MediaPlayer();
-                    mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-
-
-                    try {
-                        mediaPlayer.setDataSource(songs.get(getAdapterPosition()).getUrl());
-                        mediaPlayer.prepare();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    mediaPlayer.start();
-                    controller.show(0);
-                }
-            });
+            isPlayingGif = itemView.findViewById(R.id.isPlaying);
         }
-    }
-    @Override
-    public int getItemCount() {
-        return songs.size();
-    }
-
-    @Override
-    public void start() {
-        mediaPlayer.start();
-    }
-
-    @Override
-    public void pause() {
-        mediaPlayer.pause();
-    }
-
-    @Override
-    public int getDuration() {
-        return mediaPlayer.getDuration();
-    }
-
-    @Override
-    public int getCurrentPosition() {
-        return mediaPlayer.getCurrentPosition();
-    }
-
-    @Override
-    public void seekTo(int i) {
-        mediaPlayer.seekTo(i);
-    }
-
-    @Override
-    public boolean isPlaying() {
-        return mediaPlayer.isPlaying();
-    }
-
-    @Override
-    public int getBufferPercentage() {
-        return 0;
-    }
-
-    @Override
-    public boolean canPause() {
-        return true;
-    }
-
-    @Override
-    public boolean canSeekBackward() {
-        return true;
-    }
-
-    @Override
-    public boolean canSeekForward() {
-        return true;
-    }
-
-    @Override
-    public int getAudioSessionId() {
-        return mediaPlayer.getAudioSessionId();
     }
 }

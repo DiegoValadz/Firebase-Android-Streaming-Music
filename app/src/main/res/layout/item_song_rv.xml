@@ -1,12 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+
+<FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    android:theme="@style/Base.ThemeOverlay.AppCompat.Dark"
+    android:clickable="true"
+    android:focusable="true"
+    android:background="?attr/selectableItemBackground"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+
+    <pl.droidsonroids.gif.GifImageView
+        android:id="@+id/isPlaying"
+        android:layout_width="100dp"
+        android:layout_marginTop="10dp"
+        android:layout_height="50dp"
+        android:layout_gravity="top|right"
+        android:src="@drawable/playing"
+        android:visibility="gone"
+        />
+
+<LinearLayout
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="?selectableItemBackground"
-
+    android:layout_gravity="top|left"
     >
+
+
 
 
     <LinearLayout
@@ -20,8 +41,9 @@
         <ImageView
             android:id="@+id/imageView2"
             android:layout_width="100dp"
-            android:layout_height="80dp"
-            android:src="@drawable/song_icon" />
+            android:layout_height="50dp"
+            android:layout_gravity="center"
+            android:src="@drawable/song_icon2" />
 
 
         <LinearLayout
@@ -34,6 +56,8 @@
                 android:id="@+id/titulo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:textColor="@color/white"
                 android:text="TextView"
                 android:textAppearance="@style/TextAppearance.AppCompat" />
 
@@ -41,18 +65,20 @@
                 android:id="@+id/artista"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:textColor="@color/white"
                 android:text="TextView" />
 
             <TextView
                 android:id="@+id/album"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:textColor="@color/green_1"
                 android:text="TextView" />
+
         </LinearLayout>
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@android:color/darker_gray"/>
+
+
 
 </LinearLayout>
 </LinearLayout>
+</FrameLayout>
